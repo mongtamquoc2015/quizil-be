@@ -5,17 +5,20 @@ var router = express.Router();
 router.get("/", function (req, res, next) {
   res.locals.connection.query(
     "SELECT * FROM answers",
-    function (error, result, fields) {
+    function (error, result) {
       if (error) throw error;
-      res.send(
-        JSON.stringify({
-          status: 200,
-          error: null,
-          response: {
-            data: result,
-          },
-        })
-      );
+      res.send(result);
+    }
+  );
+});
+
+router.get("/:questionId", function (req, res, next) {
+  let { questionId } = req.params();
+  res.locals.connection.query(
+    `SELECT * FROM answers WHERE question_id = ${questionId}`,
+    function (error, result) {
+      if (error) throw error;
+      res.send(result);
     }
   );
 });
@@ -25,15 +28,7 @@ router.post("/", function (req, res, next) {
     "INSERT INTO answers(name,question_id) VALUES (`${req.body.name},${req.body.question_id}`)",
     function (error, result) {
       if (error) throw error;
-      res.send(
-        JSON.stringify({
-          status: 201,
-          error: null,
-          response: {
-            data: result,
-          },
-        })
-      );
+      res.send(result);
     }
   );
 });
